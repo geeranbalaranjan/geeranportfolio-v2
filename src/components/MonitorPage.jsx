@@ -3,6 +3,7 @@ import emailjs from '@emailjs/browser'
 
 export default function MonitorPage({ activePage, onNavigate }) {
   const navItems = ['ABOUT', 'EXPERIENCE', 'PROJECTS', 'CONTACT']
+  const isMobile = window.innerWidth < 768
 
   return (
     <div style={{
@@ -16,37 +17,39 @@ export default function MonitorPage({ activePage, onNavigate }) {
 
       {/* Left sidebar */}
       <div style={{
-        width: '180px',
-        minWidth: '180px',
+        width: isMobile ? '90px' : '180px',
+        minWidth: isMobile ? '90px' : '180px',
         borderRight: '1px solid #ccc',
-        padding: '24px 20px',
+        padding: isMobile ? '16px 4px' : '24px 20px',
         display: 'flex',
         flexDirection: 'column',
         gap: '4px',
         background: '#f0f0f0',
         overflowY: 'auto',
       }}>
-        {/* Logo / name */}
-        <div style={{
-          fontFamily: 'Georgia, serif',
-          fontWeight: 'bold',
-          fontSize: '15px',
-          color: '#1a1a2e',
-          marginBottom: '20px',
-          lineHeight: 1.3,
-        }}>
-          Geeran<br />Balaranjan
+        {/* Logo / name — hide on mobile */}
+        {!isMobile && (
           <div style={{
-            fontFamily: 'monospace',
-            fontSize: '10px',
-            fontWeight: 'normal',
-            color: '#475569',
-            marginTop: '2px',
-            letterSpacing: '0.05em',
+            fontFamily: 'Georgia, serif',
+            fontWeight: 'bold',
+            fontSize: '15px',
+            color: '#1a1a2e',
+            marginBottom: '20px',
+            lineHeight: 1.3,
           }}>
-            Portfolio
+            Geeran<br />Balaranjan
+            <div style={{
+              fontFamily: 'monospace',
+              fontSize: '10px',
+              fontWeight: 'normal',
+              color: '#475569',
+              marginTop: '2px',
+              letterSpacing: '0.05em',
+            }}>
+              Portfolio
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Nav items */}
         {navItems.map(item => (
@@ -55,16 +58,19 @@ export default function MonitorPage({ activePage, onNavigate }) {
             onClick={() => onNavigate(item.toLowerCase())}
             style={{
               fontFamily: 'monospace',
-              fontSize: '12px',
-              letterSpacing: '0.08em',
+              fontSize: isMobile ? '9px' : '12px',
+              letterSpacing: isMobile ? '0.04em' : '0.08em',
               color: activePage === item.toLowerCase() ? '#1a1a2e' : '#4a5568',
               cursor: 'pointer',
-              padding: '6px 8px',
+              padding: isMobile ? '10px 4px' : '6px 8px',
               borderRadius: '3px',
               background: activePage === item.toLowerCase() ? 'rgba(0,0,0,0.06)' : 'transparent',
               borderLeft: activePage === item.toLowerCase() ? '2px solid #1a1a2e' : '2px solid transparent',
+              textAlign: isMobile ? 'center' : 'left',
               transition: 'all 0.15s',
               userSelect: 'none',
+              wordBreak: 'break-word',
+              lineHeight: 1.2,
             }}
             onMouseEnter={e => {
               if (activePage !== item.toLowerCase()) {
@@ -79,7 +85,10 @@ export default function MonitorPage({ activePage, onNavigate }) {
               }
             }}
           >
-            {activePage === item.toLowerCase() ? '• ' : ''}{item}
+            {isMobile
+              ? item
+              : (activePage === item.toLowerCase() ? '• ' : '') + item
+            }
           </div>
         ))}
 
@@ -88,19 +97,20 @@ export default function MonitorPage({ activePage, onNavigate }) {
           onClick={() => onNavigate('home')}
           style={{
             fontFamily: 'monospace',
-            fontSize: '11px',
+            fontSize: isMobile ? '14px' : '11px',
             color: '#94a3b8',
             cursor: 'pointer',
-            padding: '6px 8px',
-            marginTop: '16px',
+            padding: isMobile ? '10px 4px' : '6px 8px',
+            marginTop: isMobile ? '8px' : '16px',
             letterSpacing: '0.05em',
+            textAlign: isMobile ? 'center' : 'left',
             transition: 'color 0.15s',
             userSelect: 'none',
           }}
           onMouseEnter={e => e.currentTarget.style.color = '#4a5568'}
           onMouseLeave={e => e.currentTarget.style.color = '#94a3b8'}
         >
-          ← Home
+          {isMobile ? '←' : '← Home'}
         </div>
       </div>
 
@@ -108,7 +118,7 @@ export default function MonitorPage({ activePage, onNavigate }) {
       <div style={{
         flex: 1,
         overflowY: 'auto',
-        padding: '32px 40px',
+        padding: isMobile ? '16px 12px' : '32px 40px',
         position: 'relative',
       }}>
         <PageContent page={activePage} />
