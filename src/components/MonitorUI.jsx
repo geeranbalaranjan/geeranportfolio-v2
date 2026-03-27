@@ -93,7 +93,7 @@ export default function MonitorUI() {
           color: '#333',
           gap: '8px',
         }}>
-          Geeran Balaranjan — Portfolio
+          Portfolio
         </div>
 
         {/* URL bar */}

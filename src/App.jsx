@@ -43,7 +43,7 @@ function MobileWarning() {
           lineHeight: 1.5,
         }}
       >
-        best experienced on desktop &nbsp;·&nbsp; <span style={{ opacity: 0.6 }}>tap to dismiss</span>
+        best experienced on desktop<br /><span style={{ opacity: 0.6 }}>tap to dismiss</span>
       </div>
     </div>
   )
