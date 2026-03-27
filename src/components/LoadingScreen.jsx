@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useProgress } from '@react-three/drei'
 import useRoomStore from '../store/useRoomStore'
 
 const BOOT_LINES = [
@@ -13,39 +14,30 @@ const BOOT_LINES = [
 export default function LoadingScreen() {
   const setSceneMode = useRoomStore((s) => s.setSceneMode)
   const [lines, setLines] = useState([])
-  const [progress, setProgress] = useState(0)
+  const [bootComplete, setBootComplete] = useState(false)
+  const { progress } = useProgress()
 
   useEffect(() => {
     let lineIndex = 0
     const lineInterval = setInterval(() => {
       if (lineIndex < BOOT_LINES.length) {
         setLines((prev) => [...prev, BOOT_LINES[lineIndex]])
+        if (lineIndex >= BOOT_LINES.length - 1) {
+          setBootComplete(true)
+          clearInterval(lineInterval)
+        }
         lineIndex++
-      } else {
-        clearInterval(lineInterval)
       }
     }, 450)
+    return () => clearInterval(lineInterval)
+  }, [])
 
-    const progressInterval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(progressInterval)
-          return 100
-        }
-        return prev + 2
-      })
-    }, 60)
-
-    const timer = setTimeout(() => {
-      setSceneMode('exploring')
-    }, 3500)
-
-    return () => {
-      clearInterval(lineInterval)
-      clearInterval(progressInterval)
-      clearTimeout(timer)
+  useEffect(() => {
+    if (progress >= 100 && bootComplete) {
+      const t = setTimeout(() => setSceneMode('exploring'), 600)
+      return () => clearTimeout(t)
     }
-  }, [setSceneMode])
+  }, [progress, bootComplete, setSceneMode])
 
   return (
     <div style={styles.overlay}>
@@ -62,9 +54,9 @@ export default function LoadingScreen() {
           )}
         </div>
         <div style={styles.progressBar}>
-          <div style={{ ...styles.progressFill, width: `${progress}%` }} />
+          <div style={{ ...styles.progressFill, width: `${Math.max(5, progress)}%` }} />
         </div>
-        <div style={styles.progressLabel}>{progress}%</div>
+        <div style={styles.progressLabel}>{Math.round(progress)}%</div>
       </div>
     </div>
   )
