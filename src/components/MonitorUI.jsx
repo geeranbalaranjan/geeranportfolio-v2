@@ -32,10 +32,20 @@ export default function MonitorUI() {
   if (!ready) return null
   if (!monitorScreenBounds || monitorScreenBounds.width < 10) return null
 
-  const { left, top, width, height, clipPoints } = monitorScreenBounds
+  const { left: rawLeft, top: rawTop, width: rawWidth, height: rawHeight, clipPoints } = monitorScreenBounds
 
+  const vw = window.innerWidth
+  const vh = window.innerHeight
+  const top    = Math.max(0, rawTop)
+  const left   = Math.max(0, rawLeft)
+  const width  = Math.min(rawWidth,  vw - left)
+  const height = Math.min(rawHeight, vh - top)
+
+  // Shift clip points if top was clamped
+  const topOffset  = top  - rawTop
+  const leftOffset = left - rawLeft
   const clipPath = clipPoints && clipPoints.length >= 3
-    ? `polygon(${clipPoints.map(p => `${p.x}px ${p.y}px`).join(', ')})`
+    ? `polygon(${clipPoints.map(p => `${p.x - leftOffset}px ${p.y - topOffset}px`).join(', ')})`
     : undefined
 
   return (
@@ -47,6 +57,9 @@ export default function MonitorUI() {
       height,
       zIndex: 10,
       clipPath,
+      overflowY: 'auto',
+      overflowX: 'hidden',
+      WebkitOverflowScrolling: 'touch',
       background: '#fafafa',
       display: 'flex',
       flexDirection: 'column',
@@ -147,7 +160,7 @@ export default function MonitorUI() {
             padding: '16px',
           }}>
             <h1 style={{
-              fontSize: 'clamp(18px, 4vw, 52px)',
+              fontSize: 'clamp(26px, 4vw, 52px)',
               fontWeight: 'bold',
               color: '#1a1a2e',
               margin: 0,
@@ -157,7 +170,7 @@ export default function MonitorUI() {
               Geeran Balaranjan
             </h1>
             <p style={{
-              fontSize: 'clamp(9px, 1.2vw, 16px)',
+              fontSize: 'clamp(13px, 1.2vw, 16px)',
               color: '#475569',
               fontFamily: 'monospace',
               letterSpacing: '0.2em',
@@ -183,7 +196,7 @@ export default function MonitorUI() {
                   }}
                   style={{
                     fontFamily: 'monospace',
-                    fontSize: 'clamp(8px, 1vw, 14px)',
+                    fontSize: 'clamp(12px, 1vw, 14px)',
                     letterSpacing: '0.15em',
                     color: '#4a5568',
                     cursor: 'pointer',

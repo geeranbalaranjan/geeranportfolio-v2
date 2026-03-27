@@ -1,9 +1,53 @@
 import { useEffect } from 'react'
+import React from 'react'
 import useRoomStore from './store/useRoomStore'
 import LoadingScreen from './components/LoadingScreen'
 import Scene3D from './components/Scene3D'
 import ClickAnywhereOverlay from './components/ClickAnywhereOverlay'
 import MonitorUI from './components/MonitorUI'
+
+// ── Mobile warning ───────────────────────────────────────────────────────────
+function MobileWarning() {
+  const [dismissed, setDismissed] = React.useState(false)
+  const cameraState = useRoomStore((s) => s.cameraState)
+  if (dismissed || window.innerWidth >= 768) return null
+  const atMonitor = cameraState === 'monitor'
+  return (
+    <div style={{
+      position: 'fixed',
+      inset: 0,
+      zIndex: 200,
+      display: 'flex',
+      alignItems: atMonitor ? 'flex-end' : 'flex-start',
+      justifyContent: 'center',
+      paddingBottom: atMonitor ? '10vh' : '0',
+      paddingTop: atMonitor ? '0' : '16px',
+      pointerEvents: 'none',
+    }}>
+      <div
+        onClick={() => setDismissed(true)}
+        style={{
+          fontFamily: 'monospace',
+          color: 'white',
+          fontSize: 'clamp(11px, 3.5vw, 14px)',
+          userSelect: 'none',
+          letterSpacing: '0.08em',
+          background: 'rgba(0,0,0,0.4)',
+          border: '1px solid rgba(255,255,255,0.15)',
+          backdropFilter: 'blur(8px)',
+          padding: '10px 22px',
+          borderRadius: '4px',
+          pointerEvents: 'auto',
+          cursor: 'pointer',
+          textAlign: 'center',
+          lineHeight: 1.5,
+        }}
+      >
+        best experienced on desktop &nbsp;·&nbsp; <span style={{ opacity: 0.6 }}>tap to dismiss</span>
+      </div>
+    </div>
+  )
+}
 
 // ── Back / Escape button ─────────────────────────────────────────────────────
 function BackButton() {
@@ -84,6 +128,9 @@ export default function App() {
 
       {/* 4. Back button — z-index 50, fixed top-left, fades in when not at room view */}
       <BackButton />
+
+      {/* 5. Mobile warning — z-index 200, shown only on small screens */}
+      <MobileWarning />
 
     </div>
   )
