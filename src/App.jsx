@@ -9,23 +9,27 @@ import MonitorUI from './components/MonitorUI'
 // ── Mobile warning ───────────────────────────────────────────────────────────
 function MobileWarning() {
   const [dismissed, setDismissed] = React.useState(false)
-  const cameraState = useRoomStore((s) => s.cameraState)
-  if (dismissed || window.innerWidth >= 768) return null
-  const atMonitor = cameraState === 'monitor'
+  const cameraState        = useRoomStore((s) => s.cameraState)
+  const hasClickedAnywhere = useRoomStore((s) => s.hasClickedAnywhere)
+  if (window.innerWidth >= 768) return null
+  if (dismissed || hasClickedAnywhere || cameraState === 'monitor') return null
   return (
     <div style={{
       position: 'fixed',
       inset: 0,
       zIndex: 200,
       display: 'flex',
-      alignItems: atMonitor ? 'flex-end' : 'flex-start',
+      alignItems: 'flex-start',
       justifyContent: 'center',
-      paddingBottom: atMonitor ? '10vh' : '0',
-      paddingTop: atMonitor ? '0' : '16px',
+      paddingTop: '16px',
       pointerEvents: 'none',
     }}>
       <div
         onClick={() => setDismissed(true)}
+        onMouseDown={e => e.stopPropagation()}
+        onMouseUp={e => e.stopPropagation()}
+        onTouchStart={e => e.stopPropagation()}
+        onTouchEnd={e => e.stopPropagation()}
         style={{
           fontFamily: 'monospace',
           color: 'white',
