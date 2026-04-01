@@ -54,9 +54,9 @@ export default function LoadingScreen() {
           )}
         </div>
         <div style={styles.progressBar}>
-          <div style={{ ...styles.progressFill, width: `${Math.max(5, progress)}%` }} />
+          <div style={{ ...styles.progressFill, width: `${Math.max(5, bootComplete ? progress : Math.min(progress, 99))}%` }} />
         </div>
-        <div style={styles.progressLabel}>{Math.round(progress)}%</div>
+        <div style={styles.progressLabel}>{bootComplete ? Math.round(progress) : Math.min(Math.round(progress), 99)}%</div>
       </div>
     </div>
   )
